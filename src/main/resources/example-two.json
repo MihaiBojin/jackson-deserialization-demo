@@ -1,0 +1,12 @@
+[
+  {
+    "analyzer": {
+      "@type": "SomeAnalyzer"
+    }
+  },
+  {
+    "analyzer": {
+      "@type": "AnotherAnalyzer"
+    }
+  }
+]
