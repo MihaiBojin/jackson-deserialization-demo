@@ -70,7 +70,7 @@ class AnalyzerDeserializerTest {
                 }
         );
 
-        // read the data
+        // read the data; it is in the same format as the first option above
         InputStream is = this.getClass().getResourceAsStream("/example-one.json");
 
         // ACT
@@ -89,7 +89,6 @@ class AnalyzerDeserializerTest {
     void polymorphicDeserialization() throws IOException {
         // ARRANGE
 
-        // register the analyzers so that the object mapper is aware of them and can properly deserialize
         ObjectMapper mapper = new ObjectMapper();
 
         // one advantage of this method is that it doesn't require Guice
