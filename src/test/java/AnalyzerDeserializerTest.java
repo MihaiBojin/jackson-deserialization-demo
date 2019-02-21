@@ -25,7 +25,6 @@ class AnalyzerDeserializerTest {
 
         // configure Guice
         injector = Guice.createInjector(
-                new ObjectMapperModule(),
                 binder -> {
                     // initialize your registry object; this can also be done via a Guice Provider
                     // the advantage of using this method is that you have full control over the initialization of analyzer objects
@@ -43,15 +42,47 @@ class AnalyzerDeserializerTest {
 
         // ACT
         ObjectMapper mapper = injector.getInstance(ObjectMapper.class);
-        mapper.registerSubtypes(DefaultAnalyzer.class);
 
-        List<PojoWithRegistry> pojos = mapper.readValue(is, new TypeReference<List<PojoWithRegistry>>() {
+        List<PojoWithResolvedAnalyzer> pojos = mapper.readValue(is, new TypeReference<List<PojoWithResolvedAnalyzer>>() {
         });
 
         // ASSERT
         assertThat(pojos, hasSize(2));
         assertThat(pojos.get(0).analyzer, instanceOf(DefaultAnalyzer.class));
         assertThat(pojos.get(1).analyzer, instanceOf(AnotherAnalyzer.class));
+    }
+
+    @Test
+    void deserializationWithInjectedRegistryObjectStraightIntoThePojo() throws IOException {
+        // ARRANGE
+
+        // configure Guice
+        injector = Guice.createInjector(
+                new ObjectMapperModule(),
+                binder -> {
+                    // initialize your registry object; this can also be done via a Guice Provider
+                    // the advantage of using this method is that you have full control over the initialization of analyzer objects
+                    final Registry registry = new Registry(new DefaultAnalyzer(), new AnotherAnalyzer());
+                    binder.bind(Registry.class).toInstance(registry); // bind the registry as a singleton
+
+                    // no deserializers are required
+                    // the registry object will be injected directly into the POJO and can be used via the getAnalyzer() method
+                }
+        );
+
+        // read the data
+        InputStream is = this.getClass().getResourceAsStream("/example-one.json");
+
+        // ACT
+        ObjectMapper mapper = injector.getInstance(ObjectMapper.class);
+
+        List<PojoWithInjectedRegistry> pojos = mapper.readValue(is, new TypeReference<List<PojoWithInjectedRegistry>>() {
+        });
+
+        // ASSERT
+        assertThat(pojos, hasSize(2));
+        assertThat(pojos.get(0).getAnalyzer(), instanceOf(DefaultAnalyzer.class));
+        assertThat(pojos.get(1).getAnalyzer(), instanceOf(AnotherAnalyzer.class));
     }
 
     @Test
