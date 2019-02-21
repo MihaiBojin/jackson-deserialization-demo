@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.module.guice.ObjectMapperModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -26,7 +27,7 @@ class AnalyzerDeserializerTest {
         // configure Guice
         injector = Guice.createInjector(
                 binder -> {
-                    // initialize your registry object; this can also be done via a Guice Provider
+                    // initialize your registry object; this can also be done via a Guice Provider (see below)
                     // the advantage of using this method is that you have full control over the initialization of analyzer objects
                     final Registry registry = new Registry(new DefaultAnalyzer(), new AnotherAnalyzer());
                     binder.bind(Registry.class).toInstance(registry); // bind the registry as a singleton
@@ -60,10 +61,8 @@ class AnalyzerDeserializerTest {
         injector = Guice.createInjector(
                 new ObjectMapperModule(),
                 binder -> {
-                    // initialize your registry object; this can also be done via a Guice Provider
-                    // the advantage of using this method is that you have full control over the initialization of analyzer objects
-                    final Registry registry = new Registry(new DefaultAnalyzer(), new AnotherAnalyzer());
-                    binder.bind(Registry.class).toInstance(registry); // bind the registry as a singleton
+                    // initialize your registry via a Provider (more Guice-y, pun-intended)
+                    binder.bind(Registry.class).toProvider(new RegistryProvider()).asEagerSingleton();
 
                     // no deserializers are required
                     // the registry object will be injected directly into the POJO and can be used via the getAnalyzer() method
@@ -111,5 +110,15 @@ class AnalyzerDeserializerTest {
         assertThat(pojos, hasSize(2));
         assertThat(pojos.get(0).analyzer, instanceOf(SomeAnalyzer.class));
         assertThat(pojos.get(1).analyzer, instanceOf(AnotherAnalyzer.class));
+    }
+}
+
+/**
+ * Guice provider class
+ */
+class RegistryProvider implements Provider<Registry> {
+    @Override
+    public Registry get() {
+        return new Registry(new DefaultAnalyzer(), new AnotherAnalyzer());
     }
 }
