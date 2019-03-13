@@ -1,0 +1,12 @@
+{
+  "supers": {
+    "canBeEitherButIsA": {
+      "type": "a"
+    },
+    "canBeEitherButIsB": {
+      "type": "b"
+    }
+  },
+  "onlyA": {
+  }
+}

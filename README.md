@@ -1,4 +1,4 @@
-# Jackson Deserizaliztion demo
+# Jackson Deserizalization demo
 
 Showcases three ways to inject objects into deserialized JSON models.
 
