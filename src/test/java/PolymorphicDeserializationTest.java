@@ -15,7 +15,7 @@ import poly.SubClassB;
 public class PolymorphicDeserializationTest {
 
   @Test
-  void polymorphicDeserialization() throws IOException {
+  public void testPolymorphicDeserialization() throws IOException {
     // ARRANGE
 
     ObjectMapper mapper = new ObjectMapper();
