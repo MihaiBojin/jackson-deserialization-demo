@@ -3,23 +3,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
 public class DeserializationErrorTest {
 
-  @Test
-  void testDeserializeWrongInput() throws IOException {
+  @Test()
+  public void testDeserializeWrongInput() {
     final ObjectMapper mapper = new ObjectMapper();
-    try {
-      // deserialize a bad object
-      mapper.readValue("{\"foo\" : { \"bar\" : \"not-int\" }}", MyProxy.class);
-    } catch (MismatchedInputException e) {
-      throw remapMismatchedInputException(e, RuntimeException.class);
-    }
+    Assertions.assertThrows(RuntimeException.class, () -> {
+      try {
+        // deserialize a bad object
+        mapper.readValue("{\"foo\" : { \"bar\" : \"not-int\" }}", MyProxy.class);
+      } catch (MismatchedInputException e) {
+        throw remapMismatchedInputException(e, RuntimeException.class);
+      }
+    });
   }
 
   private <T extends Exception> T remapMismatchedInputException(final MismatchedInputException e, Class<T> exClass) {

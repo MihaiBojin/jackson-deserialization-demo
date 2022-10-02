@@ -17,11 +17,11 @@ import java.io.InputStream;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class AnalyzerDeserializerTest {
+public class AnalyzerDeserializerTest {
     Injector injector;
 
     @Test
-    void deserializationWithInjectedRegistryObject() throws IOException {
+    public void testDeserializationWithInjectedRegistryObject() throws IOException {
         // ARRANGE
 
         // configure Guice
@@ -54,7 +54,7 @@ class AnalyzerDeserializerTest {
     }
 
     @Test
-    void deserializationWithInjectedRegistryObjectStraightIntoThePojo() throws IOException {
+    public void testDeserializationWithInjectedRegistryObjectStraightIntoThePojo() throws IOException {
         // ARRANGE
 
         // configure Guice
@@ -85,7 +85,7 @@ class AnalyzerDeserializerTest {
     }
 
     @Test
-    void polymorphicDeserialization() throws IOException {
+    public void testPolymorphicDeserialization() throws IOException {
         // ARRANGE
 
         ObjectMapper mapper = new ObjectMapper();
